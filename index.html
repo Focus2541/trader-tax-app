@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ภาษีนักเทรด</title>
+<meta name="theme-color" content="#1E4F46">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ภาษีนักเทรด">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F3EC; --panel:#FFFFFF; --ink:#20302C; --ink-soft:#5B6B64; --line:#DDD7C6;
+  --teal:#2F6F63; --teal-dark:#1E4F46; --teal-tint:#E6EFEA;
+  --ochre:#AD7A26; --ochre-tint:#F4E9D6; --danger:#B0392F; --danger-tint:#F6E4E1;
+  --radius:10px; --font-head:'Kanit',system-ui,sans-serif;
+  --font-body:'Sarabun','Noto Sans Thai','Leelawadee UI',Tahoma,system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+#app{max-width:720px;margin:0 auto;padding-bottom:140px;}
+.topbar{padding:22px 20px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:5;}
+.brand{font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--teal-dark);}
+.brand small{display:block;font-family:var(--font-body);font-weight:400;font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+main{padding:16px 18px 10px;}
+.intro{color:var(--ink-soft);font-size:14px;margin:0 0 18px;}
+.section{margin-bottom:22px;}
+.section-title{font-family:var(--font-head);font-weight:600;font-size:15px;color:#fff;background:var(--teal);padding:9px 14px;border-radius:8px;margin-bottom:12px;}
+.field{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin-bottom:9px;}
+.field label{display:block;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.field .hint{display:block;font-weight:400;color:var(--ink-soft);font-size:12px;margin-bottom:7px;line-height:1.4;}
+.field input[type=number]{
+  width:100%;font-family:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);
+  border-radius:7px;background:#FBFAF6;color:var(--ink);
+}
+.field input[type=number]:focus{outline:2px solid var(--teal);outline-offset:-1px;}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;margin-top:2px;}
+.seg button{flex:1;padding:9px 8px;border:none;background:#fff;font-family:inherit;font-size:13.5px;color:var(--ink-soft);cursor:pointer;border-right:1px solid var(--line);}
+.seg button:last-child{border-right:none;}
+.seg button.active{background:var(--teal);color:#fff;font-weight:600;}
+.note{font-size:12px;color:var(--ink-soft);background:var(--teal-tint);border:1px solid #D3E3DC;border-radius:7px;padding:8px 10px;margin-top:6px;line-height:1.45;}
+.note.exempt{background:var(--ochre-tint);border-color:#E7D3AC;color:#7A5A19;}
+.result-bar{
+  position:fixed;left:0;right:0;bottom:0;background:var(--teal-dark);color:#fff;
+  padding:14px 18px calc(14px + env(safe-area-inset-bottom));z-index:10;
+  box-shadow:0 -4px 16px rgba(0,0,0,.15);
+}
+.result-bar-inner{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.result-bar .rlabel{font-size:12.5px;opacity:.85;}
+.result-bar .ramount{font-family:var(--font-head);font-weight:700;font-size:22px;}
+.result-bar .rsign{font-size:12px;opacity:.85;font-weight:400;}
+.result-bar button{
+  background:#fff;color:var(--teal-dark);border:none;border-radius:7px;padding:9px 14px;
+  font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+}
+.detail-panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:18px;font-size:13.5px;}
+.detail-panel.open{display:block;}
+.detail-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line);}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .k{color:var(--ink-soft);}
+.detail-row .v{font-weight:600;}
+.detail-row.total{border-top:2px solid var(--teal);margin-top:4px;padding-top:8px;}
+footer.appfoot{padding:16px 20px 8px;text-align:center;color:var(--ink-soft);font-size:11.5px;}
+.disclaimer{font-size:12px;color:var(--ink-soft);background:#FBFAF6;border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:6px 0 20px;line-height:1.55;}
+@media(max-width:420px){ main{padding:14px 14px 6px;} .topbar{padding:18px 14px 12px;} }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand">ภาษีนักเทรด<small>ใช้งานส่วนตัว · ประมวลผลในเครื่องทั้งหมด ไม่อัปโหลดขึ้นเซิร์ฟเวอร์</small></div>
+  </div>
+  <main id="main"></main>
+  <footer class="appfoot">อ้างอิงอัตราภาษีและวงเงินลดหย่อนปีภาษี 2568 (ยื่นต้นปี 2569) — เครื่องมือประมาณการเบื้องต้นเท่านั้น</footer>
+</div>
+
+<div class="result-bar">
+  <div class="result-bar-inner">
+    <div>
+      <div class="rlabel" id="rLabel">ภาษีที่ต้องชำระเพิ่ม</div>
+      <div class="ramount" id="rAmount">0 บาท</div>
+    </div>
+    <button id="toggleDetail">ดูรายละเอียด</button>
+  </div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((err) => console.warn('sw register failed', err));
+  });
+}
+</script>
+<script>
+const $ = (s,el)=> (el||document).querySelector(s);
+const el = (tag, attrs, children) => {
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k==='class') e.className = attrs[k];
+    else if(k==='html') e.innerHTML = attrs[k];
+    else if(k.startsWith('on') && typeof attrs[k]==='function') e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  (children||[]).forEach(c=>{ if(c!=null) e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return e;
+};
+const fmt = n => Math.round(n||0).toLocaleString('th-TH');
+
+/* ---- state ---- */
+const state = {
+  spouse:0, child1:0, child2:0, parents:0,
+  salary:0, otherIncome:0,
+  setGain:0, dividend:0, divInclude:0, cryptoTh:0, foreignIncome:0,
+  lifeIns:0, parentHealthIns:0, rmfSsf:0, thaiEsg:0, homeInterest:0, ssfGov:0, donation:0,
+};
+
+/* ---- tax bracket table (2568) ---- */
+const BRACKETS = [
+  {lo:0,        hi:150000,   rate:0.00, cum:0},
+  {lo:150000,   hi:300000,   rate:0.05, cum:0},
+  {lo:300000,   hi:500000,   rate:0.10, cum:7500},
+  {lo:500000,   hi:750000,   rate:0.15, cum:27500},
+  {lo:750000,   hi:1000000,  rate:0.20, cum:65000},
+  {lo:1000000,  hi:2000000,  rate:0.25, cum:115000},
+  {lo:2000000,  hi:5000000,  rate:0.30, cum:365000},
+  {lo:5000000,  hi:Infinity, rate:0.35, cum:1265000},
+];
+function progressiveTax(net){
+  net = Math.max(0, net);
+  const b = BRACKETS.find(b => net >= b.lo && net < b.hi) || BRACKETS[BRACKETS.length-1];
+  return b.cum + (net - b.lo) * b.rate;
+}
+
+function numField(key, label, hint){
+  const wrap = el('div', {class:'field'});
+  wrap.appendChild(el('label',{},[label]));
+  if(hint) wrap.appendChild(el('span',{class:'hint'},[hint]));
+  const input = el('input', {type:'number', inputmode:'decimal', min:'0', placeholder:'0', value: state[key] || ''});
+  input.addEventListener('input', () => { state[key] = parseFloat(input.value) || 0; compute(); });
+  wrap.appendChild(input);
+  return wrap;
+}
+function segField(key, label, hint, options){
+  const wrap = el('div', {class:'field'});
+  wrap.appendChild(el('label',{},[label]));
+  if(hint) wrap.appendChild(el('span',{class:'hint'},[hint]));
+  const seg = el('div', {class:'seg'});
+  options.forEach(([val, text]) => {
+    const b = el('button', {type:'button'}, [text]);
+    if(state[key] === val) b.classList.add('active');
+    b.addEventListener('click', () => {
+      state[key] = val;
+      $$('.seg button', seg).forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      compute();
+    });
+    seg.appendChild(b);
+  });
+  wrap.appendChild(seg);
+  return wrap;
+}
+function $$(sel, ctx){ return Array.from((ctx||document).querySelectorAll(sel)); }
+function countField(key, label, hint){
+  const wrap = el('div', {class:'field'});
+  wrap.appendChild(el('label',{},[label]));
+  if(hint) wrap.appendChild(el('span',{class:'hint'},[hint]));
+  const input = el('input', {type:'number', inputmode:'numeric', min:'0', step:'1', placeholder:'0', value: state[key] || ''});
+  input.addEventListener('input', () => { state[key] = parseInt(input.value) || 0; compute(); });
+  wrap.appendChild(input);
+  return wrap;
+}
+
+function render(){
+  const main = $('#main');
+  main.innerHTML = '';
+  main.appendChild(el('p',{class:'intro'},['กรอกตัวเลขด้านล่าง ผลลัพธ์จะอัปเดตอัตโนมัติที่แถบล่างสุด']));
+
+  // 1) ข้อมูลส่วนตัว
+  main.appendChild(el('div',{class:'section-title'},['1) ข้อมูลส่วนตัวและครอบครัว']));
+  const s1 = el('div',{class:'section'});
+  s1.appendChild(segField('spouse','มีคู่สมรสที่ไม่มีเงินได้หรือไม่','ลดหย่อนเพิ่ม 60,000 บาท', [[0,'ไม่มี'],[1,'มี']]));
+  s1.appendChild(countField('child1','จำนวนบุตร (คนแรก หรือเกิดก่อนปี 2561)','คนละ 30,000 บาท'));
+  s1.appendChild(countField('child2','จำนวนบุตรคนที่ 2 ขึ้นไป (เกิดตั้งแต่ปี 2561)','คนละ 60,000 บาท'));
+  s1.appendChild(countField('parents','จำนวนบิดา-มารดาที่เข้าเงื่อนไขลดหย่อน','อายุ ≥60 ปี รายได้ไม่เกิน 30,000/ปี สูงสุด 4 คน คนละ 30,000 บาท'));
+  main.appendChild(s1);
+
+  // 2) รายได้ปกติ
+  main.appendChild(el('div',{class:'section-title'},['2) รายได้ปกติ']));
+  const s2 = el('div',{class:'section'});
+  s2.appendChild(numField('salary','เงินเดือน/ค่าจ้างรวมทั้งปี (บาท)'));
+  s2.appendChild(numField('otherIncome','รายได้อื่นที่ไม่ใช่เงินเดือนและไม่ใช่การเทรด (บาท)','เช่น ค่านายหน้า ค่าเช่า'));
+  main.appendChild(s2);
+
+  // 3) รายได้จากการเทรด
+  main.appendChild(el('div',{class:'section-title'},['3) รายได้จากการเทรด']));
+  const s3 = el('div',{class:'section'});
+  const f1 = numField('setGain','กำไรจากขายหุ้นในตลาดหลักทรัพย์ไทย (SET/mai)');
+  f1.appendChild(el('div',{class:'note exempt'},['ได้รับยกเว้นภาษีเสมอ — ไม่นำมารวมคำนวณ']));
+  s3.appendChild(f1);
+  s3.appendChild(numField('dividend','เงินปันผลจากหุ้นไทย (ยอดก่อนหักภาษี ณ ที่จ่าย)'));
+  s3.appendChild(segField('divInclude','นำเงินปันผลมารวมคำนวณภาษีหรือไม่','ถ้าไม่รวม ถือว่าจบด้วยการหัก ณ ที่จ่าย 10% เป็นที่สุด', [[0,'ไม่รวม'],[1,'รวม']]));
+  const f2 = numField('cryptoTh','กำไรคริปโต/โทเคนดิจิทัล ผ่านศูนย์ซื้อขายที่ได้รับอนุญาตในไทย','เช่น Bitkub');
+  f2.appendChild(el('div',{class:'note exempt'},['ยกเว้นภาษีตามกฎกระทรวงฉบับที่ 399 (พ.ศ. 2568) สำหรับกำไรที่เกิดขึ้น 1 ม.ค. 2568 – 31 ธ.ค. 2572 เท่านั้น']));
+  s3.appendChild(f2);
+  const f3 = numField('foreignIncome','กำไรจาก Forex/ทองคำ/CFD/คริปโตต่างประเทศ ที่โอนเข้าไทยปีนี้');
+  f3.appendChild(el('div',{class:'note'},['ถือเป็นเงินได้จากต่างประเทศ (มาตรา 40(8)) ต้องรวมคำนวณภาษีเต็มจำนวนที่โอนเข้า หากอยู่ในไทยครบ 180 วัน และกำไรเกิดตั้งแต่ 1 ม.ค. 2567 (คำสั่ง ป.161/162 พ.ศ. 2566) — การจัดประเภทที่แท้จริงขึ้นกับข้อเท็จจริงรายกรณี ควรปรึกษาผู้เชี่ยวชาญ']));
+  s3.appendChild(f3);
+  main.appendChild(s3);
+
+  // 4) ค่าลดหย่อน
+  main.appendChild(el('div',{class:'section-title'},['4) ค่าลดหย่อนและเงินสมทบ']));
+  const s4 = el('div',{class:'section'});
+  s4.appendChild(numField('lifeIns','เบี้ยประกันชีวิต/สะสมทรัพย์','สูงสุด 100,000 บาท'));
+  s4.appendChild(numField('parentHealthIns','เบี้ยประกันสุขภาพบิดามารดา','ตามจริง สูงสุด 15,000 บาท'));
+  s4.appendChild(numField('rmfSsf','RMF + SSF + กบข./PVD/กองทุนสงเคราะห์ครู + ประกันบำนาญ','รวมกันสูงสุด 500,000 บาท'));
+  s4.appendChild(numField('thaiEsg','กองทุน Thai ESG','แยกวงเงิน สูงสุด 300,000 บาท และไม่เกิน 30% ของเงินได้'));
+  s4.appendChild(numField('homeInterest','ดอกเบี้ยเงินกู้ยืมเพื่อที่อยู่อาศัย','สูงสุด 100,000 บาท'));
+  s4.appendChild(numField('ssfGov','เงินสมทบกองทุนประกันสังคม','ตามจริง (ปกติราว 9,000 บาท/ปี แต่บางปีมีมาตรการลดชั่วคราว)'));
+  s4.appendChild(numField('donation','เงินบริจาคทั่วไป','หักได้ไม่เกิน 10% ของเงินได้หลังหักค่าใช้จ่ายและลดหย่อนอื่น'));
+  main.appendChild(s4);
+
+  main.appendChild(el('div',{class:'detail-panel',id:'detailPanel'}));
+  main.appendChild(el('div',{class:'disclaimer'},['เครื่องมือนี้ใช้เพื่อประมาณการเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำทางภาษีอย่างเป็นทางการ การจัดประเภทเงินได้จากการเทรด Forex/CFD/คริปโตต่างประเทศขึ้นกับข้อเท็จจริงรายกรณี และเครดิตภาษีเงินปันผลแบบ imputation ไม่ได้รวมอยู่ในการคำนวณนี้ ควรตรวจสอบกับผู้สอบบัญชีภาษีหรือกรมสรรพากรก่อนยื่นแบบจริงทุกครั้ง']));
+}
+
+function compute(){
+  const st = state;
+  const salaryExpense = Math.min(st.salary*0.5, 100000);
+  const salaryNet = st.salary - salaryExpense;
+  const dividendIncl = st.divInclude===1 ? st.dividend : 0;
+  const totalIncome = salaryNet + st.otherIncome + dividendIncl + st.foreignIncome;
+
+  const dPersonal = 60000;
+  const dSpouse = st.spouse*60000;
+  const dChild = st.child1*30000 + st.child2*60000;
+  const dParents = st.parents*30000;
+  const dLife = Math.min(st.lifeIns,100000);
+  const dPHealth = Math.min(st.parentHealthIns,15000);
+  const dRmfSsf = Math.min(st.rmfSsf,500000);
+  const dEsg = Math.min(st.thaiEsg,300000);
+  const dHome = Math.min(st.homeInterest,100000);
+  const dSsfGov = st.ssfGov;
+  const dedSubtotal = dPersonal+dSpouse+dChild+dParents+dLife+dPHealth+dRmfSsf+dEsg+dHome+dSsfGov;
+
+  const netBeforeDonation = Math.max(totalIncome - dedSubtotal, 0);
+  const donationCap = netBeforeDonation*0.10;
+  const dDonation = Math.min(st.donation, donationCap);
+  const netIncome = Math.max(netBeforeDonation - dDonation, 0);
+
+  const progTax = progressiveTax(netIncome);
+
+  const nonSalaryBase = st.otherIncome + dividendIncl + st.foreignIncome;
+  const flatTax = nonSalaryBase > 120000 ? nonSalaryBase*0.005 : 0;
+  const taxBeforeCredit = Math.max(progTax, flatTax);
+
+  const divCredit = st.divInclude===1 ? st.dividend*0.10 : 0;
+  const finalTax = taxBeforeCredit - divCredit;
+
+  $('#rAmount').textContent = fmt(Math.abs(finalTax)) + ' บาท';
+  $('#rLabel').textContent = finalTax >= 0 ? 'ภาษีที่ต้องชำระเพิ่ม' : 'ภาษีที่ขอคืนได้';
+
+  const dp = $('#detailPanel');
+  const row = (k,v,cls)=> el('div',{class:'detail-row'+(cls?(' '+cls):'')},[el('span',{class:'k'},[k]), el('span',{class:'v'},[fmt(v)+' บาท'])]);
+  dp.innerHTML = '';
+  dp.appendChild(row('เงินได้เงินเดือนหลังหักค่าใช้จ่าย', salaryNet));
+  dp.appendChild(row('รวมเงินได้ที่ต้องเสียภาษีทั้งหมด', totalIncome));
+  dp.appendChild(row('รวมค่าลดหย่อน (ไม่รวมบริจาค)', dedSubtotal));
+  dp.appendChild(row('ลดหย่อนเงินบริจาคที่ใช้สิทธิได้จริง', dDonation));
+  dp.appendChild(row('เงินได้สุทธิ (ฐานคำนวณภาษี)', netIncome));
+  dp.appendChild(row('ภาษีตามวิธีขั้นบันได', progTax));
+  dp.appendChild(row('ภาษีเหมาจ่าย 0.5% ของเงินได้ที่ไม่ใช่เงินเดือน', flatTax));
+  dp.appendChild(row('เครดิตภาษีเงินปันผลที่ถูกหักไว้แล้ว', divCredit));
+  dp.appendChild(row(finalTax>=0?'ภาษีที่ต้องชำระเพิ่ม':'ภาษีที่ขอคืนได้', Math.abs(finalTax), 'total'));
+}
+
+$('#toggleDetail').addEventListener('click', () => {
+  const dp = $('#detailPanel');
+  dp.classList.toggle('open');
+  $('#toggleDetail').textContent = dp.classList.contains('open') ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียด';
+  if(dp.classList.contains('open')) dp.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+render();
+compute();
+</script>
+</body>
+</html>
